@@ -87,8 +87,8 @@ impl Header {
     ) -> io::Result<()>
     where
         F: Fn(Header) -> Header,
-        R: AsyncRead + Unpin,
-        W: AsyncWrite + Unpin,
+        R: AsyncRead + Unpin + Send,
+        W: AsyncWrite + Unpin + Send,
     {
         let mut buf: [u8; MAX_LENGTH] = [0; MAX_LENGTH];
         let mut had_written = false;
@@ -123,7 +123,7 @@ impl Header {
         }
     }
 
-    async fn write_to_stream<W: AsyncWrite + Unpin>(
+    async fn write_to_stream<W: AsyncWrite + Unpin + Send>(
         self, writer: &mut W, content: &[u8],
     ) -> io::Result<()> {
         let mut buf: Vec<u8> = Vec::new();
@@ -143,7 +143,7 @@ impl Header {
         Ok(())
     }
 
-    pub(crate) async fn new_from_stream<R: AsyncRead + Unpin>(reader: &mut R) -> io::Result<Self> {
+    pub(crate) async fn new_from_stream<R: AsyncRead + Unpin + Send>(reader: &mut R) -> io::Result<Self> {
         let mut buf: [u8; HEADER_LEN] = [0; HEADER_LEN];
         reader.read_exact(&mut buf).await?;
 
@@ -162,7 +162,7 @@ impl Header {
         }
     }
 
-    pub(crate) async fn read_content_from_stream<R: AsyncRead + Unpin>(
+    pub(crate) async fn read_content_from_stream<R: AsyncRead + Unpin + Send>(
         &self, reader: &mut R,
     ) -> io::Result<Vec<u8>> {
         let mut buf = vec![0; self.content_length as usize];
@@ -225,7 +225,7 @@ impl BeginRequestRec {
         })
     }
 
-    pub(crate) async fn write_to_stream<W: AsyncWrite + Unpin>(
+    pub(crate) async fn write_to_stream<W: AsyncWrite + Unpin + Send>(
         self, writer: &mut W,
     ) -> io::Result<()> {
         self.header.write_to_stream(writer, &self.content).await
@@ -291,7 +291,7 @@ impl<'a> ParamPair<'a> {
         }
     }
 
-    async fn write_to_stream<W: AsyncWrite + Unpin>(&self, writer: &mut W) -> io::Result<()> {
+    async fn write_to_stream<W: AsyncWrite + Unpin + Send>(&self, writer: &mut W) -> io::Result<()> {
         writer.write_all(&self.name_length.content().await?).await?;
         writer
             .write_all(&self.value_length.content().await?)
@@ -387,7 +387,7 @@ pub(crate) struct EndRequestRec {
 }
 
 impl EndRequestRec {
-    pub(crate) async fn from_header<R: AsyncRead + Unpin>(
+    pub(crate) async fn from_header<R: AsyncRead + Unpin + Send>(
         header: &Header, reader: &mut R,
     ) -> io::Result<Self> {
         let header = header.clone();

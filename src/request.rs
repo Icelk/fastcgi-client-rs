@@ -16,12 +16,12 @@ use crate::Params;
 use tokio::io::AsyncRead;
 
 /// fastcgi request.
-pub struct Request<'a, I: AsyncRead + Unpin> {
+pub struct Request<'a, I: AsyncRead + Unpin + Send> {
     pub(crate) params: Params<'a>,
     pub(crate) stdin: I,
 }
 
-impl<'a, I: AsyncRead + Unpin> Request<'a, I> {
+impl<'a, I: AsyncRead + Unpin + Send> Request<'a, I> {
     pub fn new(params: Params<'a>, stdin: I) -> Self {
         Self { params, stdin }
     }

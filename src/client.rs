@@ -45,9 +45,10 @@ impl<S: AsyncRead + AsyncWrite + Unpin> Client<S, ShortConn> {
         }
     }
 
+<<<<<<< HEAD
     /// Send request and receive response from fastcgi server, under short
     /// connection mode.
-    pub async fn execute_once<I: AsyncRead + Unpin>(
+    pub async fn execute_once<I: AsyncRead + Unpin + Send>(
         mut self, request: Request<'_, I>,
     ) -> ClientResult<Response> {
         self.inner_execute(request).await
@@ -88,7 +89,7 @@ impl<S: AsyncRead + AsyncWrite + Unpin> Client<S, ShortConn> {
     }
 }
 
-impl<S: AsyncRead + AsyncWrite + Unpin> Client<S, KeepAlive> {
+impl<S: AsyncRead + AsyncWrite + Unpin + Send> Client<S, KeepAlive> {
     /// Construct a `Client` Object with stream, such as `tokio::net::TcpStream`
     /// or `tokio::net::UnixStream`, under keep alive connection mode.
     pub fn new_keep_alive(stream: S) -> Self {
@@ -100,7 +101,7 @@ impl<S: AsyncRead + AsyncWrite + Unpin> Client<S, KeepAlive> {
 
     /// Send request and receive response from fastcgi server, under keep alive
     /// connection mode.
-    pub async fn execute<I: AsyncRead + Unpin>(
+    pub async fn execute<I: AsyncRead + Unpin + Send>(
         &mut self, request: Request<'_, I>,
     ) -> ClientResult<Response> {
         self.inner_execute(request).await
@@ -136,7 +137,7 @@ impl<S: AsyncRead + AsyncWrite + Unpin> Client<S, KeepAlive> {
     ///     }
     /// }
     /// ```
-    pub async fn execute_stream<I: AsyncRead + Unpin>(
+    pub async fn execute_stream<I: AsyncRead + Unpin + Send>(
         &mut self, request: Request<'_, I>,
     ) -> ClientResult<ResponseStream<&mut S>> {
         Self::handle_request(&mut self.stream, REQUEST_ID, request.params, request.stdin).await?;
@@ -144,15 +145,15 @@ impl<S: AsyncRead + AsyncWrite + Unpin> Client<S, KeepAlive> {
     }
 }
 
-impl<S: AsyncRead + AsyncWrite + Unpin, M: Mode> Client<S, M> {
-    async fn inner_execute<I: AsyncRead + Unpin>(
+impl<S: AsyncRead + AsyncWrite + Unpin + Send, M: Mode> Client<S, M> {
+    async fn inner_execute<I: AsyncRead + Unpin + Send>(
         &mut self, request: Request<'_, I>,
     ) -> ClientResult<Response> {
         Self::handle_request(&mut self.stream, REQUEST_ID, request.params, request.stdin).await?;
         Self::handle_response(&mut self.stream, REQUEST_ID).await
     }
 
-    async fn handle_request<'a, I: AsyncRead + Unpin>(
+    async fn handle_request<'a, I: AsyncRead + Unpin + Send>(
         stream: &mut S, id: u16, params: Params<'a>, mut body: I,
     ) -> ClientResult<()> {
         Self::handle_request_start(stream, id).await?;
