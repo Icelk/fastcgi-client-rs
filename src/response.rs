@@ -69,7 +69,7 @@ pub struct ResponseStream<S: AsyncRead + Unpin> {
     read_step: ReadStep,
 }
 
-impl<S: AsyncRead + Unpin> ResponseStream<S> {
+impl<S: AsyncRead + Unpin + Send> ResponseStream<S> {
     #[inline]
     pub(crate) fn new(stream: S, id: u16) -> Self {
         Self {

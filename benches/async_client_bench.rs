@@ -16,7 +16,7 @@
 
 extern crate test;
 
-use fastcgi_client::{conn::KeepAlive, request::Request, Client, Params};
+use kvarn_fastcgi_client::{conn::KeepAlive, request::Request, Client, Params};
 use std::env::current_dir;
 use test::Bencher;
 use tokio::{
@@ -26,7 +26,7 @@ use tokio::{
 
 mod common;
 
-async fn test_client<S: AsyncRead + AsyncWrite + Unpin>(client: &mut Client<S, KeepAlive>) {
+async fn test_client<S: AsyncRead + AsyncWrite + Unpin + Send>(client: &mut Client<S, KeepAlive>) {
     let document_root = current_dir().unwrap().join("tests").join("php");
     let document_root = document_root.to_str().unwrap();
     let script_name = current_dir()
@@ -37,30 +37,30 @@ async fn test_client<S: AsyncRead + AsyncWrite + Unpin>(client: &mut Client<S, K
     let script_name = script_name.to_str().unwrap();
 
     let params = Params::default()
-        .set_request_method("GET")
-        .set_document_root(document_root)
-        .set_script_name("/index.php")
-        .set_script_filename(script_name)
-        .set_request_uri("/index.php")
-        .set_document_uri("/index.php")
-        .set_remote_addr("127.0.0.1")
-        .set_remote_port("12345")
-        .set_server_addr("127.0.0.1")
-        .set_server_port("80")
-        .set_server_name("jmjoy-pc")
-        .set_content_type("")
-        .set_content_length("0");
+        .request_method("GET")
+        .document_root(document_root)
+        .script_name("/index.php")
+        .script_filename(script_name)
+        .request_uri("/index.php")
+        .document_uri("/index.php")
+        .remote_addr("127.0.0.1")
+        .remote_port(12345)
+        .server_addr("127.0.0.1")
+        .server_port(80)
+        .server_name("jmjoy-pc")
+        .content_type("")
+        .content_length(0);
 
     let output = client
         .execute(Request::new(params, &mut io::empty()))
         .await
         .unwrap();
 
-    let stdout = String::from_utf8(output.get_stdout().unwrap_or(Default::default())).unwrap();
+    let stdout = String::from_utf8(output.stdout.unwrap_or(Default::default())).unwrap();
     assert!(stdout.contains("Content-type: text/html; charset=UTF-8"));
     assert!(stdout.contains("\r\n\r\n"));
     assert!(stdout.contains("hello"));
-    assert_eq!(output.get_stderr(), None);
+    assert_eq!(output.stderr, None);
 }
 
 #[bench]

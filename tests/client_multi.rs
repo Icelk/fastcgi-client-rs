@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use fastcgi_client::{request::Request, response::Content, Client, Params};
+use kvarn_fastcgi_client::{request::Request, response::Content, Client, Params};
 use std::{env::current_dir, io::Cursor};
 use tokio::net::TcpStream;
 

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use fastcgi_client::{conn::ShortConn, request::Request, response::Content, Client, Params};
+use kvarn_fastcgi_client::{conn::ShortConn, request::Request, response::Content, Client, Params};
 use std::env::current_dir;
 use tokio::{
     io::{self, AsyncRead, AsyncWrite},
@@ -29,7 +29,7 @@ async fn test() {
     test_client(Client::new(stream)).await;
 }
 
-async fn test_client<S: AsyncRead + AsyncWrite + Unpin>(client: Client<S, ShortConn>) {
+async fn test_client<S: AsyncRead + AsyncWrite + Unpin + Send>(client: Client<S, ShortConn>) {
     let document_root = current_dir().unwrap().join("tests").join("php");
     let document_root = document_root.to_str().unwrap();
     let script_name = current_dir()
@@ -74,7 +74,7 @@ async fn test_stream() {
     test_client_stream(Client::new(stream)).await;
 }
 
-async fn test_client_stream<S: AsyncRead + AsyncWrite + Unpin>(client: Client<S, ShortConn>) {
+async fn test_client_stream<S: AsyncRead + AsyncWrite + Unpin + Send>(client: Client<S, ShortConn>) {
     let document_root = current_dir().unwrap().join("tests").join("php");
     let document_root = document_root.to_str().unwrap();
     let script_name = current_dir()
@@ -131,7 +131,7 @@ async fn test_big_response_stream() {
     test_client_big_response_stream(Client::new(stream)).await;
 }
 
-async fn test_client_big_response_stream<S: AsyncRead + AsyncWrite + Unpin>(
+async fn test_client_big_response_stream<S: AsyncRead + AsyncWrite + Unpin + Send>(
     client: Client<S, ShortConn>,
 ) {
     let document_root = current_dir().unwrap().join("tests").join("php");

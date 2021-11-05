@@ -35,7 +35,7 @@ pub struct Client<S, M> {
     _mode: PhantomData<M>,
 }
 
-impl<S: AsyncRead + AsyncWrite + Unpin> Client<S, ShortConn> {
+impl<S: AsyncRead + AsyncWrite + Unpin + Send> Client<S, ShortConn> {
     /// Construct a `Client` Object with stream, such as `tokio::net::TcpStream`
     /// or `tokio::net::UnixStream`, under short connection mode.
     pub fn new(stream: S) -> Self {
@@ -45,7 +45,6 @@ impl<S: AsyncRead + AsyncWrite + Unpin> Client<S, ShortConn> {
         }
     }
 
-<<<<<<< HEAD
     /// Send request and receive response from fastcgi server, under short
     /// connection mode.
     pub async fn execute_once<I: AsyncRead + Unpin + Send>(
@@ -81,7 +80,7 @@ impl<S: AsyncRead + AsyncWrite + Unpin> Client<S, ShortConn> {
     ///     }
     /// }
     /// ```
-    pub async fn execute_once_stream<'a, I: AsyncRead + Unpin>(
+    pub async fn execute_once_stream<'a, I: AsyncRead + Unpin + Send>(
         mut self, request: Request<'_, I>,
     ) -> ClientResult<ResponseStream<S>> {
         Self::handle_request(&mut self.stream, REQUEST_ID, request.params, request.stdin).await?;
@@ -209,7 +208,7 @@ impl<S: AsyncRead + AsyncWrite + Unpin + Send, M: Mode> Client<S, M> {
         Ok(())
     }
 
-    async fn handle_request_body<I: AsyncRead + Unpin>(
+    async fn handle_request_body<I: AsyncRead + Unpin + Send>(
         stream: &mut S, id: u16, body: &mut I,
     ) -> ClientResult<()> {
         Header::write_to_stream_batches(

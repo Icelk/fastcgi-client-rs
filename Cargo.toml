@@ -13,19 +13,19 @@
 # limitations under the License.
 
 [package]
-name = "fastcgi-client"
+name = "kvarn-fastcgi-client"
 version = "0.9.0"
-authors = ["jmjoy <jmjoy@apache.org>"]
+authors = ["jmjoy <jmjoy@apache.org>", "Icelk <main@icelk.dev>"]
 edition = "2021"
 description = "Fastcgi client implemented for Rust."
-repository = "https://github.com/jmjoy/fastcgi-client-rs"
+repository = "https://github.com/Icelk/fastcgi-client-rs"
 license = "Apache-2.0"
 readme = "README.md"
 keywords = ["fastcgi", "fcgi", "client", "tokio", "php"]
 
 [dependencies]
 thiserror = "1.0.32"
-tokio = { version = "1.20.1", features = ["io-util", "sync", "time"] }
+tokio = { version = "1.23", features = ["io-util", "sync", "time"] }
 tracing = "0.1.36"
 
 [dev-dependencies]
