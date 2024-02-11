@@ -4,6 +4,10 @@
 [![Crate](https://img.shields.io/crates/v/fastcgi-client.svg)](https://crates.io/crates/fastcgi-client)
 [![API](https://docs.rs/fastcgi-client/badge.svg)](https://docs.rs/fastcgi-client)
 
+> Forked from [`jmjoy/fastcgi-client-rs`](https://github.com/jmjoy/fastcgi-client-rs) to provide
+> `fastcgi` with the Rust `Send` trait implemented. This is needed for Kvarn.
+> The releases of this crate are kept in sync with upstream to the best of my ability.
+
 Fastcgi client implemented for Rust, power by [tokio](https://crates.io/crates/tokio).
 
 ## Installation

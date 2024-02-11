@@ -143,7 +143,9 @@ impl Header {
         Ok(())
     }
 
-    pub(crate) async fn new_from_stream<R: AsyncRead + Unpin + Send>(reader: &mut R) -> io::Result<Self> {
+    pub(crate) async fn new_from_stream<R: AsyncRead + Unpin + Send>(
+        reader: &mut R,
+    ) -> io::Result<Self> {
         let mut buf: [u8; HEADER_LEN] = [0; HEADER_LEN];
         reader.read_exact(&mut buf).await?;
 
@@ -291,7 +293,9 @@ impl<'a> ParamPair<'a> {
         }
     }
 
-    async fn write_to_stream<W: AsyncWrite + Unpin + Send>(&self, writer: &mut W) -> io::Result<()> {
+    async fn write_to_stream<W: AsyncWrite + Unpin + Send>(
+        &self, writer: &mut W,
+    ) -> io::Result<()> {
         writer.write_all(&self.name_length.content().await?).await?;
         writer
             .write_all(&self.value_length.content().await?)

@@ -74,7 +74,9 @@ async fn test_stream() {
     test_client_stream(Client::new(stream)).await;
 }
 
-async fn test_client_stream<S: AsyncRead + AsyncWrite + Unpin + Send>(client: Client<S, ShortConn>) {
+async fn test_client_stream<S: AsyncRead + AsyncWrite + Unpin + Send>(
+    client: Client<S, ShortConn>,
+) {
     let document_root = current_dir().unwrap().join("tests").join("php");
     let document_root = document_root.to_str().unwrap();
     let script_name = current_dir()
