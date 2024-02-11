@@ -16,7 +16,7 @@ Add dependencies to your `Cargo.toml` by `cargo add`:
 
 ```shell
 cargo add tokio --features full
-cargo add fastcgi-client
+cargo add kvarn-fastcgi-client
 ```
 
 ## Examples
@@ -24,7 +24,7 @@ cargo add fastcgi-client
 Short connection mode:
 
 ```rust, no_run
-use fastcgi_client::{Client, Params, Request};
+use kvarn_fastcgi_client::{Client, Params, Request};
 use std::env;
 use tokio::{io, net::TcpStream};
 
@@ -72,7 +72,7 @@ async fn main() {
 Keep alive mode:
 
 ```rust, no_run
-use fastcgi_client::{Client, Params, Request};
+use kvarn_fastcgi_client::{Client, Params, Request};
 use std::env;
 use tokio::{io, net::TcpStream};
 
